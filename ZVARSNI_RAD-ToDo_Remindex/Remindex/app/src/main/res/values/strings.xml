@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Remindex</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="odabir_boja">
+        <item>Crvena</item>
+        <item>Zelena</item>
+        <item>Plava</item>
+        <item>Žuta</item>
+    </string-array>
+
+
+</resources>

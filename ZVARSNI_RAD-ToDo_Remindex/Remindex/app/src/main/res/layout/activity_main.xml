@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:id="@+id/ralativelayoutGlavni">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="center"
+            android:background="@color/Plava"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/main_linear"
+        android:layout_width="match_parent"
+        android:layout_marginTop="80dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_anchorGravity="center">
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="79dp"
+        android:layout_height="153dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabKalendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/fabDodaj"
+                app:backgroundTint="#0081AF"
+                android:clickable="true"
+                app:srcCompat="@drawable/outline_calendar_today_white_24dp"
+                android:focusable="true" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabDodaj"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fabKalendar"
+                android:layout_alignRight="@+id/fabKalendar"
+                android:layout_marginTop="70dp"
+                android:clickable="true"
+                app:backgroundTint="#0081AF"
+                app:srcCompat="@drawable/outline_note_add_white_24dp"
+                android:layout_alignEnd="@+id/fabKalendar"
+                android:focusable="true" />
+
+        </android.support.design.widget.CoordinatorLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
+
+
+
+
+
+
