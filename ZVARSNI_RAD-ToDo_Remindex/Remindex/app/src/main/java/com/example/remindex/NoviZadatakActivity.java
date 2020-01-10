@@ -61,9 +61,9 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         kalendar.set(Calendar.YEAR, godina);
         kalendar.set(Calendar.MONTH, mjesec);
         kalendar.set(Calendar.DAY_OF_MONTH, dan);
-        String danasnjiDatumString = DateFormat.getDateInstance(DateFormat.FULL).format(kalendar.getTime());
+        String odabraniDatumString = DateFormat.getDateInstance(DateFormat.FULL).format(kalendar.getTime());
         EditText editTextDatum= (EditText) findViewById(R.id.editTextDatum);
-        editTextDatum.setText(danasnjiDatumString);
+        editTextDatum.setText(odabraniDatumString);
     }
 
     @Override
