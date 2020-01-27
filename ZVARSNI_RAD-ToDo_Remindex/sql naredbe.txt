@@ -1,0 +1,10 @@
+CREATE TABLE "dogadaj" (
+	"naziv"	TEXT NOT NULL,
+	"datum"	TEXT NOT NULL,
+	"vrijeme"	TEXT NOT NULL,
+	"boja"	TEXT NOT NULL,
+	"notifi_datum"	TEXT NOT NULL,
+	"notifi_vrijeme"	TEXT NOT NULL
+)
+
+CREATE TABLE "android_metadata" ("locale" TEXT DEFAULT 'en_US')

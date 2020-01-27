@@ -1,0 +1,1 @@
+ideja mi je kaj bu se saki put dok denes novi event (na ovome activityju de se delaju eventi) te event spremil v bazu, I ve npr napravim 10 eventi... I saki put dok bi dosel na Main Window bi se program setal po bazi i gledal ak ima eventi i ak je onda za saki red v bazi napravil novi tw

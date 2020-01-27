@@ -1,0 +1,2 @@
+bedic - podsjetnik ima sat kak i vrijeme di se odabere tocno kad se oces pojetiti - if(datum i vrijeme dogadaja - trenutno vrijeme i datum = podsjetnik){notification;}
+polanec - odabir HRV/ENG - status bar

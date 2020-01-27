@@ -21,16 +21,17 @@
             android:background="@color/Plava"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/main_linear"
         android:layout_width="match_parent"
-        android:layout_marginTop="80dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
-        app:layout_anchorGravity="center">
-    </LinearLayout>
-
+        app:layout_anchorGravity="center"/>
+</ScrollView>
     <RelativeLayout
         android:layout_width="79dp"
         android:layout_height="153dp"
@@ -43,26 +44,26 @@
             tools:context=".MainActivity">
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabKalendar"
+                android:id="@+id/fabBrisi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/fabDodaj"
-                app:backgroundTint="#0081AF"
                 android:clickable="true"
-                app:srcCompat="@drawable/outline_calendar_today_white_24dp"
-                android:focusable="true" />
+                android:focusable="true"
+                app:backgroundTint="#0081AF"
+                app:srcCompat="@drawable/baseline_delete_white_24dp" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabDodaj"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fabKalendar"
-                android:layout_alignRight="@+id/fabKalendar"
+                android:layout_below="@+id/fabBrisi"
+                android:layout_alignRight="@+id/fabBrisi"
                 android:layout_marginTop="70dp"
                 android:clickable="true"
                 app:backgroundTint="#0081AF"
                 app:srcCompat="@drawable/outline_note_add_white_24dp"
-                android:layout_alignEnd="@+id/fabKalendar"
+                android:layout_alignEnd="@+id/fabBrisi"
                 android:focusable="true" />
 
         </android.support.design.widget.CoordinatorLayout>

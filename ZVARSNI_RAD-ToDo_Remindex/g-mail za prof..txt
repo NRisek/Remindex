@@ -1,0 +1,5 @@
+Stel sam poslati to (12.7.2019.) - vezano uz stvaranje textboxa...
+
+Poštovani profesore,
+ radeći na mojoj aplikaciji naišao sam na prepreku...Naime, prvobitna ideja vezana uz stvaranje novog događaja/zadatka bila je da se na "MainActivityju" dinamično stvaraju "TextBoxevi" peko drugog Activityja (pod drugi mislim na onaj na kojemu se unose podaci za novi događaj). Tu se javio problem. Čitajući forume zaključio sam da se to ne može napraviti (nije moguće direktno stvarati TextBoxeve na jednom Acitvityju preko drugog Activityja)
+-------------------------------------------

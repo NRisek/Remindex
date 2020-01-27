@@ -1,0 +1,12 @@
+Problemi s FAB-om - coordinator layout - Gradlef
+------------------------------------------------------------
+Problem s odabirom datuma na novom zadatku - Nova klasa OdabirDatuma
+--------------------------------------------------------------------------------------------
+Problem s odabirom vremena - Nova klasa OdabirDatuma
+----------------------------------------------------------------------
+Problem s mijenjanjem boje FAB-a - XML VALUES mojeboje - custom boje
+------------------------------------------------------------------------------------------
+Problem s zaobljenim btn - drawable - zaobljena_tipka *****NE KORISTIM
+-------------------------------------------------------------------
+Problem s stvaranjem novog tw-a pri spremanju dogadaja
+-----------------------------------------------------------------------
