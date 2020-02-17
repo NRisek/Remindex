@@ -165,6 +165,6 @@
         android:layout_marginBottom="15dp"
         android:layout_marginRight="15dp"
         android:textColor="#FFF"
-        android:background="@drawable/zaobljena_tipka"/>
+        android:background="@drawable/zaobljeni_tw"/>
 
 </RelativeLayout>
