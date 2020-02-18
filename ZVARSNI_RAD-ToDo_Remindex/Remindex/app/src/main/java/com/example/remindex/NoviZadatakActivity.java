@@ -55,7 +55,9 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         setContentView(R.layout.activity_novi_zadatak);
         dbHelper=new EventiDBHelper(NoviZadatakActivity.this);
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);      //ucitavamo RB iz datoteke
-        RBBrojac = spremljeniRB.getInt("spremljeniRB",RBBrojac);        //ucitavamo RB iz datoteke
+        RBBrojac = spremljeniRB.getInt("spremljeniRB",RBBrojac);                     //ucitavamo RB iz datoteke
+
+        //Ukoliko zelimo resetirati RB, zovemo fju resetRB() u onCreate
 
         EditText editTextDatum = (EditText) findViewById(R.id.editTextDatum);
         EditText editTextVrijeme = (EditText) findViewById(R.id.editTextVrijeme);
@@ -86,7 +88,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     @Override
     protected void onStop() {
         super.onStop();
-        dbHelper.clodeDB();
+        dbHelper.closeDB();
     }
 
     @Override
@@ -153,12 +155,10 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         builder.show();
     }
     public void spremiZadatak(View view){
-
         EditText editTextNazivDogadaja = (EditText) findViewById(R.id.editTextNazivDogadaja);
         EditText editTextDatum = (EditText) findViewById(R.id.editTextDatum);
         EditText editTextVrijeme = (EditText) findViewById(R.id.editTextVrijeme);
         RadioButton radioBtn1Dan = (RadioButton) findViewById(R.id.radioBtn1dan);
-        //RadioButton radioBtn1Sat = (RadioButton) findViewById(R.id.radioBtn1sat);
         String nazivDogadaja = editTextNazivDogadaja.getText().toString();
         String datum = editTextDatum.getText().toString();
         String vrijeme = editTextVrijeme.getText().toString();
@@ -183,11 +183,18 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         }
         RBBrojac++;
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);  //spremamo RB u datoteku
-        SharedPreferences.Editor editor=spremljeniRB.edit();
-        editor.putInt("spremljeniRB",RBBrojac);
-        editor.commit();
+        SharedPreferences.Editor editor=spremljeniRB.edit();                          //spremamo RB u datoteku
+        editor.putInt("spremljeniRB",RBBrojac);                                       //spremamo RB u datoteku
+        editor.commit();                                                              //spremamo RB u datoteku
         Intent intentVratiSe = new Intent(this, MainActivity.class);
         startActivity(intentVratiSe);
+    }
+    public void resetRB(){
+        RBBrojac=1;
+        SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);  //spremamo RB u datoteku
+        SharedPreferences.Editor editor=spremljeniRB.edit();                          //spremamo RB u datoteku
+        editor.putInt("spremljeniRB",RBBrojac);                                       //spremamo RB u datoteku
+        editor.apply();
     }
 }
 

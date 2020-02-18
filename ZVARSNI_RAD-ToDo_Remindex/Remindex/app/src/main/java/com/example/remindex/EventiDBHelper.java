@@ -32,7 +32,7 @@ public class EventiDBHelper extends SQLiteOpenHelper {
 
         String queryTable = "CREATE TABLE " + TABLE_NAME +
                 "(" +
-                REDNI_BROJ+" INTEGER PRIMARY KEY, " +                                               //REDNI_BROJ+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                REDNI_BROJ+" INTEGER PRIMARY KEY, " +                                               //REDNI_BROJ+" INTEGER PRIMARY KEY, " +
                 NAZIV+" TEXT NOT NULL, " +
                 DATUM+" TEXT NOT NULL, " +
                 VRIJEME+" TEXT NOT NULL, " +
@@ -53,7 +53,7 @@ public class EventiDBHelper extends SQLiteOpenHelper {
     public void openDB(){
         myDB=getWritableDatabase();
     }
-    public void clodeDB(){
+    public void closeDB(){
         if(myDB!=null && myDB.isOpen()){
             myDB.close();
         }
