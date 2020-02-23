@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     final int redniBrojZaBrisanje=dogadaji.get(i).RB; // Spremamo RB dogadaja koji ce nam koristiti za brisanje
                     tw.setText(tekst);
                     mainLinear.addView(tw);
+                    /*
                     tw.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {    //listener za brisanje kod pritiska na dogadaj
@@ -147,6 +148,37 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                             builder.show();
+                        }
+                    });
+                    */
+                    //ON LONG
+                    tw.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {    //listener za brisanje kod pritiska na dogadaj
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("Jeste li sigurni da želite obrisati događaj?");
+                            builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    long result = dbHelper.delete(redniBrojZaBrisanje);
+                                    if(result==0){
+                                        Toast.makeText(MainActivity.this, "Greška kod brisanja!", Toast.LENGTH_LONG).show();
+                                    }
+                                    else{
+                                        Toast.makeText(MainActivity.this, "Uspjesno obrisano!, ID: "+redniBrojZaBrisanje, Toast.LENGTH_LONG).show();
+                                    }
+                                    dogadaji.clear(); //brisemo trenutni array list
+                                    pomocuKlase(); //ponovno zovemo funkciju koja ce "osvjeziti" listu
+                                }
+                            });
+                            builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            builder.show();
+                            return true;
                         }
                     });
                 }
