@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                     //ON LONG
                     tw.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
-                        public boolean onLongClick(View v) {    //listener za brisanje kod pritiska na dogadaj
+                        public boolean onLongClick(View v) {    //listener za brisanje kod pritiska na dogadaj - OnLongClick mora biti boolean
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setTitle("Jeste li sigurni da želite obrisati događaj?");
                             builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                                     else{
                                         Toast.makeText(MainActivity.this, "Uspjesno obrisano!, ID: "+redniBrojZaBrisanje, Toast.LENGTH_LONG).show();
                                     }
-                                    dogadaji.clear(); //brisemo trenutni array list
+                                    dogadaji.clear(); //brisemo trenutni array list - inače bi se ispisao isti dogadaj - u bazi je obrisan, ali u listi ne
                                     pomocuKlase(); //ponovno zovemo funkciju koja ce "osvjeziti" listu
                                 }
                             });
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                             builder.show();
-                            return true;
+                            return true;  // Posto je OnLongClick boolean moram vratiti true/false, u mojem slučaju to nije bitno
                         }
                     });
                 }

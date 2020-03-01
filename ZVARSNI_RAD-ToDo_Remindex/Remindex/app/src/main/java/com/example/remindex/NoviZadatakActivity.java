@@ -2,6 +2,9 @@ package com.example.remindex;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,9 +17,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -195,6 +201,38 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         SharedPreferences.Editor editor=spremljeniRB.edit();                          //spremamo RB u datoteku
         editor.putInt("spremljeniRB",RBBrojac);                                       //spremamo RB u datoteku
         editor.apply();
+    }
+
+    //test notifi
+    private final String CHANNEL_ID="obavijesti";
+    private final int NOTIFICATION_ID = 001;
+    public void obavijestiMe(View view){
+        Notification();
+    }
+    public void Notification(){
+        createNofiticationChannel();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.outline_calendar_today_white_24dp);
+        builder.setContentTitle("Remindex");
+        builder.setContentText("Darkec");
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
+    }
+    public void createNofiticationChannel(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            CharSequence name = "obavijesti";
+            String description = "Include all the personal notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+
+            notificationChannel.setDescription(description);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
     }
 }
 
