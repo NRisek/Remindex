@@ -54,6 +54,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     int notifiDan;
     int notifiSat=0;
     int notifiMinute=0;
+    long razlikaDatuma=0;
     String bojaFaba=""; //Kreiramo globalnu varijablu koja odreduje boju FAB-a kako bi ju mogli slati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,14 +105,11 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         kalendar.set(Calendar.MONTH, mjesec);
         kalendar.set(Calendar.DAY_OF_MONTH, dan);
         String datumString = DateFormat.getDateInstance(DateFormat.FULL).format(kalendar.getTime());
-        //kalendar.add(Calendar.DAY_OF_MONTH,-1);                                                           //Oduzimamo jedan dan od odabranog datuma te
-        //notifiDatum = kalendar.getTime();                                                                        //novi datum spremamo u notifiDatum (potrebno za notifikaciju) - drugu metodu koristim
         EditText editTextDatum= (EditText) findViewById(R.id.editTextDatum);
         editTextDatum.setText(datumString);
         notifiGodina=kalendar.get(Calendar.YEAR);
         notifiMjesec=kalendar.get(Calendar.MONTH);
         notifiDan=kalendar.get(Calendar.DAY_OF_MONTH);
-        //Toast.makeText(getBaseContext(), "Notifi mjesec = "+(notifiMjesec) , Toast.LENGTH_LONG ).show();                //DONE
     }
 
     @Override
@@ -131,8 +129,46 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         }
         notifiSat=sati;
         notifiMinute=minute;
-        //Toast.makeText(getBaseContext(), "Novo vrijeme= "+(notifiSat-1)+" : "+notifiMinute , Toast.LENGTH_LONG ).show();               //DONE
     }
+
+    public void radio1Dan(View view){
+        razlikaDatuma=0;  //refresh ako se vise puta stisne
+        Calendar trenutno = Calendar.getInstance();
+        Calendar notifiiii=Calendar.getInstance();
+        trenutno.set(trenutno.get(Calendar.YEAR), trenutno.get(Calendar.MONTH), trenutno.get(Calendar.DAY_OF_MONTH), trenutno.get(Calendar.HOUR_OF_DAY), trenutno.get(Calendar.MINUTE));
+        notifiiii.set(notifiGodina, notifiMjesec, (notifiDan-1), notifiSat, notifiMinute);
+
+        Date trenutnoVrijeme = trenutno.getTime();
+        Date vrijemeNotifiiii = notifiiii.getTime();
+        long pocetak=trenutnoVrijeme.getTime();
+        long zavrsetak = vrijemeNotifiiii.getTime();
+        long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
+        long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
+        razlikaDatuma=razlikaUSekundama;
+
+        Toast.makeText(getBaseContext(),
+                "Razlika = "+razlikaDatuma, Toast.LENGTH_LONG ).show();
+    }
+
+    public void radio1Sat(View view){
+        razlikaDatuma=0;  //refresh ako se vise puta stisne
+        Calendar trenutno = Calendar.getInstance();
+        Calendar notifiiii=Calendar.getInstance();
+        trenutno.set(trenutno.get(Calendar.YEAR), trenutno.get(Calendar.MONTH), trenutno.get(Calendar.DAY_OF_MONTH), trenutno.get(Calendar.HOUR_OF_DAY), trenutno.get(Calendar.MINUTE));
+        notifiiii.set(notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
+
+        Date trenutnoVrijeme = trenutno.getTime();
+        Date vrijemeNotifiiii = notifiiii.getTime();
+        long pocetak=trenutnoVrijeme.getTime();
+        long zavrsetak = vrijemeNotifiiii.getTime();
+        long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
+        long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
+        razlikaDatuma=razlikaUSekundama;
+
+        Toast.makeText(getBaseContext(),
+                "Razlika = "+razlikaDatuma, Toast.LENGTH_LONG ).show();
+    }
+
     public void odaberiBoju(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(R.array.odabir_boja, new DialogInterface.OnClickListener() {

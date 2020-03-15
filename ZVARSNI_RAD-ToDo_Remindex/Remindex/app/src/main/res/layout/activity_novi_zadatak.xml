@@ -108,15 +108,17 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="50dp"
             android:textSize="20dp"
+            android:onClick="radio1Dan"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:textColor="#1f1f1f"
             android:layout_height="wrap_content"
             android:text="1 dan prije događaja"
-            android:checked="true"/>
+            android:checked="false"/>
         <RadioButton
             android:id="@+id/radioBtn1sat"
             android:layout_width="match_parent"
+            android:onClick="radio1Sat"
             android:layout_height="wrap_content"
             android:textSize="20dp"
             android:textColor="#1f1f1f"
