@@ -10,6 +10,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     EventiDBHelper dbHelper;
+    private NotificationHelper mNotificationHelper;
+
     int RBBrojac;
     ArrayList<Dogadaj> dogadaji = new ArrayList<Dogadaj>();
     public static final String SPREMANJE_RB = "SpremljeniRB";
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mNotificationHelper = new NotificationHelper(this);
         dbHelper = new EventiDBHelper(MainActivity.this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -188,5 +192,16 @@ public class MainActivity extends AppCompatActivity {
     private void IdiNaNoviZadatakActivity(){                                                                            //Stvaramo funkciju IdiNaNoviZadatakActivity() koja pokreće drugi Activity
         Intent NoviZadatakIntent=new Intent(MainActivity.this, NoviZadatakActivity.class);                //Koristimo Intent
         startActivity(NoviZadatakIntent);
+    }
+
+
+    //test notofi - radi
+    public void saljiNotifikaciju(View v) {
+        posaljiNotifikaciju("RemindexTEST", "RADI?");
+    }
+
+    public void posaljiNotifikaciju(String title, String message){
+        NotificationCompat.Builder nb = mNotificationHelper.getChannelNotification(title, message);
+        mNotificationHelper.getManager().notify(1, nb.build());
     }
 }

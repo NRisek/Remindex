@@ -1,5 +1,6 @@
 package com.example.remindex;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
@@ -54,8 +55,9 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     int notifiDan;
     int notifiSat=0;
     int notifiMinute=0;
-    long razlikaDatuma=0;
+    long razlikaDatuma=0;  //sluzi za AlarmManager
     String bojaFaba=""; //Kreiramo globalnu varijablu koja odreduje boju FAB-a kako bi ju mogli slati
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +146,8 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         long zavrsetak = vrijemeNotifiiii.getTime();
         long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
         long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
-        razlikaDatuma=razlikaUSekundama;
+        //razlikaDatuma=razlikaUSekundama;
+        razlikaDatuma=razlikaUSekundama*1000;
 
         Toast.makeText(getBaseContext(),
                 "Razlika = "+razlikaDatuma, Toast.LENGTH_LONG ).show();
@@ -163,10 +166,11 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         long zavrsetak = vrijemeNotifiiii.getTime();
         long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
         long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
-        razlikaDatuma=razlikaUSekundama;
+        //razlikaDatuma=razlikaUSekundama;
+        razlikaDatuma=razlikaUSekundama*1000;
 
         Toast.makeText(getBaseContext(),
-                "Razlika = "+razlikaDatuma, Toast.LENGTH_LONG ).show();
+                        "Razlika je = "+razlikaDatuma, Toast.LENGTH_LONG ).show();
     }
 
     public void odaberiBoju(View view) {
@@ -212,6 +216,23 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
             else{
                 Toast.makeText(NoviZadatakActivity.this, "Uspjesno uneseno!, ID: "+RBBrojac, Toast.LENGTH_LONG).show();
             }
+
+            //Razlika se tu mora raditi (moguce da prođe vrijeme od postavljanja do spremanja)
+            razlikaDatuma=0;  //refresh ako se vise puta stisne
+            Calendar trenutno = Calendar.getInstance();
+            Calendar notifiiii=Calendar.getInstance();
+            trenutno.set(trenutno.get(Calendar.YEAR), trenutno.get(Calendar.MONTH), trenutno.get(Calendar.DAY_OF_MONTH), trenutno.get(Calendar.HOUR_OF_DAY), trenutno.get(Calendar.MINUTE));
+            notifiiii.set(notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
+
+            Date trenutnoVrijeme = trenutno.getTime();
+            Date vrijemeNotifiiii = notifiiii.getTime();
+            long pocetak=trenutnoVrijeme.getTime();
+            long zavrsetak = vrijemeNotifiiii.getTime();
+            long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
+            long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
+            //razlikaDatuma=razlikaUSekundama;
+            razlikaDatuma=razlikaUSekundama*1000;
+
         }
         else{
             long unos = dbHelper.insert(RBBrojac, nazivDogadaja, datum, vrijeme, bojaFaba, notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
@@ -222,15 +243,55 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
             else{
                 Toast.makeText(NoviZadatakActivity.this, "Uspjesno uneseno!, ID: "+RBBrojac, Toast.LENGTH_LONG).show();
             }
+
+            //Drugi slucaj alarma
+            razlikaDatuma=0;  //refresh ako se vise puta stisne
+            Calendar trenutno = Calendar.getInstance();
+            Calendar notifiiii=Calendar.getInstance();
+            trenutno.set(trenutno.get(Calendar.YEAR), trenutno.get(Calendar.MONTH), trenutno.get(Calendar.DAY_OF_MONTH), trenutno.get(Calendar.HOUR_OF_DAY), trenutno.get(Calendar.MINUTE));
+            notifiiii.set(notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
+
+            Date trenutnoVrijeme = trenutno.getTime();
+            Date vrijemeNotifiiii = notifiiii.getTime();
+            long pocetak=trenutnoVrijeme.getTime();
+            long zavrsetak = vrijemeNotifiiii.getTime();
+            long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
+            long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
+            //razlikaDatuma=razlikaUSekundama;
+            razlikaDatuma=razlikaUSekundama*1000;
+
         }
         RBBrojac++;
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);  //spremamo RB u datoteku
         SharedPreferences.Editor editor=spremljeniRB.edit();                          //spremamo RB u datoteku
         editor.putInt("spremljeniRB",RBBrojac);                                       //spremamo RB u datoteku
         editor.commit();                                                              //spremamo RB u datoteku
+
+        //AlarmManager
+        Calendar kalendar = Calendar.getInstance();
+        kalendar.set(Calendar.YEAR, notifiGodina);
+        kalendar.set(Calendar.MONTH, notifiMjesec);
+        kalendar.set(Calendar.DAY_OF_MONTH, notifiDan);
+        kalendar.set(Calendar.HOUR_OF_DAY, notifiSat);
+        kalendar.set(Calendar.MINUTE, notifiMinute);
+        kalendar.set(Calendar.SECOND, 0);
+
+        //startAlarm(kalendar);
+        startAlarm(razlikaDatuma);
+
         Intent intentVratiSe = new Intent(this, MainActivity.class);
         startActivity(intentVratiSe);
     }
+
+    private void startAlarm(long razlikaUMilisekundama){
+        Calendar calendarDanas = Calendar.getInstance();
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        //requestCode mora stalno biti drugaciji!!!!! za svaki alarm
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, (calendarDanas.getTimeInMillis()+razlikaUMilisekundama), pendingIntent);
+    }
+
     public void resetRB(){
         RBBrojac=1;
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);  //spremamo RB u datoteku
