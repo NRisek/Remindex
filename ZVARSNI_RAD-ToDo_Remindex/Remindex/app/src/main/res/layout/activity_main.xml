@@ -59,14 +59,6 @@
         </android.support.design.widget.CoordinatorLayout>
 
     </RelativeLayout>
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:onClick="saljiNotifikaciju"
-    android:text="Notifi"
-    android:layout_alignParentBottom="true">
-
-</Button>
 
 </RelativeLayout>
 

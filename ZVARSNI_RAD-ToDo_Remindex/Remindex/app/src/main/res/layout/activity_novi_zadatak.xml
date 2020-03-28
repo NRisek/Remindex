@@ -157,19 +157,6 @@
 </LinearLayout>
 
     <Button
-        android:id="@+id/buttonNotifi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="obavijestiMe"
-        android:text="Obavijesti me"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp"
-        android:textColor="#FFF"
-        android:background="@drawable/zaobljeni_tw"/>
-
-    <Button
         android:id="@+id/buttonSpremi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

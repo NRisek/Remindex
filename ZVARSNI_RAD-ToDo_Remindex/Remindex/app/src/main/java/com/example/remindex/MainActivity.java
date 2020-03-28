@@ -1,6 +1,9 @@
 package com.example.remindex;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,12 +24,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    EventiDBHelper dbHelper;
-    private NotificationHelper mNotificationHelper;
 
-    int RBBrojac;
-    ArrayList<Dogadaj> dogadaji = new ArrayList<Dogadaj>();
-    public static final String SPREMANJE_RB = "SpremljeniRB";
+    EventiDBHelper dbHelper; //Klasa koja pomaze pri unosu u BP
+    int RBAlarma; //Redni broj alarma i dogadaja
+    ArrayList<Dogadaj> dogadaji = new ArrayList<Dogadaj>(); //ArrayList koji pomaze pri ispisu dogadaja iz baze
+    public static final String SPREMANJE_RB = "SpremljeniRB"; //naziv datoteke u koju spremamo RBDogadaja kako se ne bi obrisao pri gasenju aplikacije
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -41,14 +44,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mNotificationHelper = new NotificationHelper(this);
+
         dbHelper = new EventiDBHelper(MainActivity.this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);     //ucitavamo RB iz datoteke
-        RBBrojac = spremljeniRB.getInt("spremljeniRB",RBBrojac);                  //ucitavamo RB iz datoteke
+        RBAlarma = spremljeniRB.getInt("spremljeniRB",RBAlarma);                  //ucitavamo RB iz datoteke
 
-        pomocuKlase(); // Ispis svih dogadaja nakon 200 milisekundi
+        ispisDogadaja(); // Ispis svih dogadaja nakon 200 milisekundi
 
         FloatingActionButton fabDodaj = findViewById(R.id.fabDodaj);   //Inicijalizacija FAB-a
         fabDodaj.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public class Dogadaj{
+    public class Dogadaj{ //Klasa koja pomaze pri ispisu dogadaja
         public int RB;
         public String nazivDogadaja;
         public String datumDogadaja;
@@ -70,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         public int notifiSat;
         public int notifiMinuta;
     }
-    public void pomocuKlase(){
+    public void ispisDogadaja(){
         new CountDownTimer(200,200){
             public void onTick(long millisUntilFinished) {
             }
@@ -122,39 +125,10 @@ public class MainActivity extends AppCompatActivity {
                     else{
                         drawable.setColor(getResources().getColor(R.color.Plava));
                     }
-                    final int redniBrojZaBrisanje=dogadaji.get(i).RB; // Spremamo RB dogadaja koji ce nam koristiti za brisanje
+                    final int redniBrojZaBrisanje=dogadaji.get(i).RB; // Spremamo RB dogadaja koji ce nam koristiti za brisanje dogadaja i alarma.
                     tw.setText(tekst);
                     mainLinear.addView(tw);
-                    /*
-                    tw.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {    //listener za brisanje kod pritiska na dogadaj
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle("Jeste li sigurni da želite obrisati događaj?");
-                            builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    long result = dbHelper.delete(redniBrojZaBrisanje);
-                                    if(result==0){
-                                        Toast.makeText(MainActivity.this, "Greška kod brisanja!", Toast.LENGTH_LONG).show();
-                                    }
-                                    else{
-                                        Toast.makeText(MainActivity.this, "Uspjesno obrisano!, ID: "+redniBrojZaBrisanje, Toast.LENGTH_LONG).show();
-                                    }
-                                    dogadaji.clear(); //brisemo trenutni array list
-                                    pomocuKlase(); //ponovno zovemo funkciju koja ce "osvjeziti" listu
-                                }
-                            });
-                            builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.show();
-                        }
-                    });
-                    */
+
                     //ON LONG
                     tw.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
@@ -165,14 +139,17 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     long result = dbHelper.delete(redniBrojZaBrisanje);
+                                    /*
                                     if(result==0){
                                         Toast.makeText(MainActivity.this, "Greška kod brisanja!", Toast.LENGTH_LONG).show();
                                     }
                                     else{
                                         Toast.makeText(MainActivity.this, "Uspjesno obrisano!, ID: "+redniBrojZaBrisanje, Toast.LENGTH_LONG).show();
                                     }
+                                    */
+                                    prekiniAlarm(redniBrojZaBrisanje);
                                     dogadaji.clear(); //brisemo trenutni array list - inače bi se ispisao isti dogadaj - u bazi je obrisan, ali u listi ne
-                                    pomocuKlase(); //ponovno zovemo funkciju koja ce "osvjeziti" listu
+                                    ispisDogadaja(); //ponovno zovemo funkciju koja ce "osvjeziti" listu
                                 }
                             });
                             builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
@@ -189,19 +166,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    private void prekiniAlarm(int redniBrojAlarmaZaBrisanje){  //funkcija briše alarm dogadaja kojeg smo obrisali
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, redniBrojAlarmaZaBrisanje, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+    }
+
     private void IdiNaNoviZadatakActivity(){                                                                            //Stvaramo funkciju IdiNaNoviZadatakActivity() koja pokreće drugi Activity
         Intent NoviZadatakIntent=new Intent(MainActivity.this, NoviZadatakActivity.class);                //Koristimo Intent
         startActivity(NoviZadatakIntent);
-    }
-
-
-    //test notofi - radi
-    public void saljiNotifikaciju(View v) {
-        posaljiNotifikaciju("RemindexTEST", "RADI?");
-    }
-
-    public void posaljiNotifikaciju(String title, String message){
-        NotificationCompat.Builder nb = mNotificationHelper.getChannelNotification(title, message);
-        mNotificationHelper.getManager().notify(1, nb.build());
     }
 }
