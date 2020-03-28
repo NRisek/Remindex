@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlertReceiver"/>
+        <receiver android:name=".PrijamnikAlarma"/>
 
     </application>
 

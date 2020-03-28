@@ -25,7 +25,7 @@ import java.util.Date;
 
 public class NoviZadatakActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     //Date notifiDatum;
-    EventiDBHelper dbHelper;
+    AlatZaUnosUBP dbHelper;
     int RBAlarma=1;  //RBAlarma, sluzi za identifikaciju ALARMA i RBDogadaja u isto vrijeme
     public static final String SPREMANJE_RB = "SpremljeniRB";   //spremamo RB u lokalnu datoteku kako se ne bi resetirala pri gasenju aplikacije
     int notifiGodina;
@@ -34,7 +34,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     int notifiSat=0;
     int notifiMinute=0;
     long razlikaDatuma=0;  //sluzi za AlarmManager
-    String bojaFaba=""; //Kreiramo globalnu varijablu koja odreduje boju FAB-a kako bi ju mogli slati
+    String bojaDogadaja=""; //Kreiramo globalnu varijablu koja odreduje boju FAB-a kako bi ju mogli slati
 
     //test
     Calendar vrijemeOkidanjaObavijesti = Calendar.getInstance();
@@ -43,7 +43,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novi_zadatak);
-        dbHelper=new EventiDBHelper(NoviZadatakActivity.this);
+        dbHelper=new AlatZaUnosUBP(NoviZadatakActivity.this);
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);      //ucitavamo RB iz datoteke
         RBAlarma = spremljeniRB.getInt("spremljeniRB",RBAlarma);                     //ucitavamo RB iz datoteke
 
@@ -155,19 +155,19 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
                 switch (which) {
                     case 0:
                         fabBoja.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.Crvena)));
-                        bojaFaba="Crvena";
+                        bojaDogadaja="Crvena";
                         break;
                     case 1:
                         fabBoja.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.Zelena)));
-                        bojaFaba="Zelena";
+                        bojaDogadaja="Zelena";
                         break;
                     case 2:
                         fabBoja.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.Plava)));
-                        bojaFaba="Plava";
+                        bojaDogadaja="Plava";
                         break;
                     case 3:
                         fabBoja.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.Žuta)));
-                        bojaFaba="Žuta";
+                        bojaDogadaja="Žuta";
                         break;
                 }
             }
@@ -183,7 +183,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         String datum = editTextDatum.getText().toString();
         String vrijeme = editTextVrijeme.getText().toString();
         if(radioBtn1Dan.isChecked()){
-            long unos = dbHelper.insert(RBAlarma, nazivDogadaja, datum, vrijeme, bojaFaba, notifiGodina, notifiMjesec, (notifiDan-1), notifiSat, notifiMinute);
+            long unos = dbHelper.insert(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, (notifiDan-1), notifiSat, notifiMinute);
             /*
             if(unos==-1){
                 Toast.makeText(NoviZadatakActivity.this, "Greška kod spremanja! ID vec postoji, kreirajte događaj još jednom.", Toast.LENGTH_LONG).show();
@@ -218,7 +218,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
             vrijemeOkidanjaObavijesti.set(Calendar.SECOND,0);
         }
         else{
-            long unos = dbHelper.insert(RBAlarma, nazivDogadaja, datum, vrijeme, bojaFaba, notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
+            long unos = dbHelper.insert(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
             // -1 znaci da se nije insertalo
             /*
             if(unos==-1){
@@ -266,7 +266,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         //Calendar calendarDanas = Calendar.getInstance();  //vraca milisekunde od 1.1.1970.  //Prije sam radio danas+razlika
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(this, AlertReceiver.class);                  //NA MOBITELU SE NE CRAHA, A TU SE CRASHA
+        Intent intent = new Intent(this, PrijamnikAlarma.class);                  //NA MOBITELU SE NE CRAHA, A TU SE CRASHA
         intent.putExtra("tekstDogađaja", (etTekstDogadjaja.getText().toString()));      //NA MOBITELU SE NE CRAHA, A TU SE CRASHA
 
         //requestCode mora stalno biti drugaciji, za svaki alarm - RBAlarma
@@ -283,7 +283,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     /*private void startAlarm(long razlikaUMilisekundama){
         Calendar calendarDanas = Calendar.getInstance();  //vraca milisekunde od 1.1.1970.
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
+        Intent intent = new Intent(this, PrijamnikAlarma.class);
         //requestCode mora stalno biti drugaciji, za svaki alarm - RBAlarma
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, RBAlarma, intent, 0);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, (calendarDanas.getTimeInMillis()+razlikaUMilisekundama), pendingIntent);   //U build.gradle je api s 15 stavljen na 19

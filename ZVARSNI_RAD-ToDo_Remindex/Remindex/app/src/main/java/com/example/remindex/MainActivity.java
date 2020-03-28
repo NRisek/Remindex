@@ -13,19 +13,17 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    EventiDBHelper dbHelper; //Klasa koja pomaze pri unosu u BP
+    AlatZaUnosUBP dbHelper; //Klasa koja pomaze pri unosu u BP
     int RBAlarma; //Redni broj alarma i dogadaja
     ArrayList<Dogadaj> dogadaji = new ArrayList<Dogadaj>(); //ArrayList koji pomaze pri ispisu dogadaja iz baze
     public static final String SPREMANJE_RB = "SpremljeniRB"; //naziv datoteke u koju spremamo RBDogadaja kako se ne bi obrisao pri gasenju aplikacije
@@ -45,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new EventiDBHelper(MainActivity.this);
+        dbHelper = new AlatZaUnosUBP(MainActivity.this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);     //ucitavamo RB iz datoteke
@@ -84,16 +82,16 @@ public class MainActivity extends AppCompatActivity {
                 if (cursor.moveToFirst()) {
                     while (!cursor.isAfterLast()) {
                         Dogadaj noviDogadaj = new Dogadaj();
-                        noviDogadaj.RB=cursor.getInt(cursor.getColumnIndex((EventiDBHelper.REDNI_BROJ)));
-                        noviDogadaj.nazivDogadaja=cursor.getString(cursor.getColumnIndex((EventiDBHelper.NAZIV)));
-                        noviDogadaj.datumDogadaja=cursor.getString(cursor.getColumnIndex((EventiDBHelper.DATUM)));
-                        noviDogadaj.vrijemeDogadaja=cursor.getString(cursor.getColumnIndex((EventiDBHelper.VRIJEME)));
-                        noviDogadaj.boja=cursor.getString(cursor.getColumnIndex((EventiDBHelper.BOJA)));
-                        noviDogadaj.notifiGodina=cursor.getInt(cursor.getColumnIndex((EventiDBHelper.NOTIFI_GODINA)));
-                        noviDogadaj.notifiMjesec=cursor.getInt(cursor.getColumnIndex((EventiDBHelper.NOTIFI_MJESEC)));
-                        noviDogadaj.notifiDan=cursor.getInt(cursor.getColumnIndex((EventiDBHelper.NOTIFI_DAN)));
-                        noviDogadaj.notifiSat=cursor.getInt(cursor.getColumnIndex((EventiDBHelper.NOTIFI_SAT)));
-                        noviDogadaj.notifiMinuta=cursor.getInt(cursor.getColumnIndex((EventiDBHelper.NOTIFI_MINUTA)));
+                        noviDogadaj.RB=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.REDNI_BROJ)));
+                        noviDogadaj.nazivDogadaja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.NAZIV)));
+                        noviDogadaj.datumDogadaja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.DATUM)));
+                        noviDogadaj.vrijemeDogadaja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.VRIJEME)));
+                        noviDogadaj.boja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.BOJA)));
+                        noviDogadaj.notifiGodina=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_GODINA)));
+                        noviDogadaj.notifiMjesec=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_MJESEC)));
+                        noviDogadaj.notifiDan=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_DAN)));
+                        noviDogadaj.notifiSat=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_SAT)));
+                        noviDogadaj.notifiMinuta=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_MINUTA)));
                         dogadaji.add(noviDogadaj);
                         cursor.moveToNext();
                     }
@@ -169,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void prekiniAlarm(int redniBrojAlarmaZaBrisanje){  //funkcija briše alarm dogadaja kojeg smo obrisali
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
+        Intent intent = new Intent(this, PrijamnikAlarma.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, redniBrojAlarmaZaBrisanje, intent, 0);
 
         alarmManager.cancel(pendingIntent);
