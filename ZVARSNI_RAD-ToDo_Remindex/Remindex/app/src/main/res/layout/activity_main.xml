@@ -23,11 +23,13 @@
     </android.support.design.widget.AppBarLayout>
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="47dp">
     <LinearLayout
         android:id="@+id/main_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="80dp"
         android:layout_marginTop="80dp"
         android:orientation="vertical"
         app:layout_anchorGravity="center"/>

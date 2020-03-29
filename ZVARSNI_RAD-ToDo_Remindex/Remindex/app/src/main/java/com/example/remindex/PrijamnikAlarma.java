@@ -23,7 +23,7 @@ public class PrijamnikAlarma extends BroadcastReceiver {
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP, "Remindex:oznaka");
-        wl.acquire(5000);
+        wl.acquire(1000); //Pokreće WakeLock
     }
 
 }

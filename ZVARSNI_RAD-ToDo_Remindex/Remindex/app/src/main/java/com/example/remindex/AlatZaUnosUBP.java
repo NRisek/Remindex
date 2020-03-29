@@ -6,31 +6,37 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class AlatZaUnosUBP extends SQLiteOpenHelper {
-    private static final int DBVersion=1;
-    private static final String DATABASE_NAME="EVENTI.db";
-    public static final String TABLE_NAME="dogadaji";
+public class AlatZaUnosUBP extends SQLiteOpenHelper {   //SQLiteOpenHelper je klasa koja služi unosu podataka u SQLite bazu podataka
+
+    //Varijable koje pomažu pri interakciji s bazom podataka
+    private static final int VerzijaBP=1; //Verzija baze
+    private static final String NAZIV_BAZE="EVENTI.db";       //Naziv baze
+    public static final String NAZIV_TABLICE="dogadaji";      //Naziv tablice
+    //Stupci
     public static final String REDNI_BROJ="rb";
-    public static final String NAZIV="naziv";  //ovo v navodnikima su nazivi stupaca
+    public static final String NAZIV="naziv";
     public static final String DATUM="datum";
     public static final String VRIJEME="vrijeme";
     public static final String BOJA="boja";
+    //Ovi stupci se ne koriste, no ostavio sam ih u bazi
     public static final String NOTIFI_GODINA="notifiGodina";
     public static final String NOTIFI_MJESEC="notifiMjesec";
     public static final String NOTIFI_DAN="notifiDan";
     public static final String NOTIFI_SAT="notifiSat";
     public static final String NOTIFI_MINUTA="notifiMinuta";
 
-    private SQLiteDatabase myDB;
+    private SQLiteDatabase mojaBaza;
 
+    //Konstruktor koji stvara bazu pri pozivanju klase
     public AlatZaUnosUBP(Context context) {
-        super(context, DATABASE_NAME, null, DBVersion);
+        super(context, NAZIV_BAZE, null, VerzijaBP);
     }
 
+    //Kod stvaranja baze, stvara se i tablica
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String queryTable = "CREATE TABLE " + TABLE_NAME +
+        String stvaranjeTablice = "CREATE TABLE " + NAZIV_TABLICE +
                 "(" +
                 REDNI_BROJ+" INTEGER PRIMARY KEY, " +                                               //REDNI_BROJ+" INTEGER PRIMARY KEY, " +
                 NAZIV+" TEXT NOT NULL, " +
@@ -43,62 +49,48 @@ public class AlatZaUnosUBP extends SQLiteOpenHelper {
                 NOTIFI_SAT+" INTEGER NOT NULL, " +
                 NOTIFI_MINUTA+" INTEGER NOT NULL " +
                 ")";
-        db.execSQL(queryTable);
+        db.execSQL(stvaranjeTablice);
     }
-
+    //onUpgrade mora biti naveden, no u ovom slučaju nije potreban, stoga je prazan
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
     }
+
     public void openDB(){
-        myDB=getWritableDatabase();
+        mojaBaza=getWritableDatabase();
     }
     public void closeDB(){
-        if(myDB!=null && myDB.isOpen()){
-            myDB.close();
+        if(mojaBaza!=null && mojaBaza.isOpen()){
+            mojaBaza.close();
         }
     }
-    public long insert(int rb, String nazivDog, String datumDog, String vrijemeDog, String bojaDog, int notifiGodina, int notifiMjesec, int notifiDan, int notifiSat, int notifiMinuta){ //rb -1 je auto increment
-        ContentValues values=new ContentValues();
-        /*if(rb!=-1){
-            values.put(REDNI_BROJ, rb);
-        }*/
 
-        values.put(REDNI_BROJ, rb);
-        values.put(NAZIV,nazivDog);
-        values.put(DATUM,datumDog);
-        values.put(VRIJEME,vrijemeDog);
-        values.put(BOJA,bojaDog);
-        values.put(NOTIFI_GODINA,notifiGodina);
-        values.put(NOTIFI_MJESEC,notifiMjesec);
-        values.put(NOTIFI_DAN,notifiDan);
-        values.put(NOTIFI_SAT,notifiSat);
-        values.put(NOTIFI_MINUTA,notifiMinuta);
-        return myDB.insert(TABLE_NAME, null, values);
+    public long unos(int rb, String nazivDog, String datumDog, String vrijemeDog, String bojaDog, int notifiGodina, int notifiMjesec, int notifiDan, int notifiSat, int notifiMinuta){
+        ContentValues vrijednosti = new ContentValues();
+
+        vrijednosti.put(REDNI_BROJ, rb);
+        vrijednosti.put(NAZIV,nazivDog);
+        vrijednosti.put(DATUM,datumDog);
+        vrijednosti.put(VRIJEME,vrijemeDog);
+        vrijednosti.put(BOJA,bojaDog);
+        vrijednosti.put(NOTIFI_GODINA,notifiGodina);
+        vrijednosti.put(NOTIFI_MJESEC,notifiMjesec);
+        vrijednosti.put(NOTIFI_DAN,notifiDan);
+        vrijednosti.put(NOTIFI_SAT,notifiSat);
+        vrijednosti.put(NOTIFI_MINUTA,notifiMinuta);
+        //Metoda "insert" unosi podatke u bazu te vraća "-1" u slučaju greške kod unosa
+        return mojaBaza.insert(NAZIV_TABLICE, null, vrijednosti);
     }
-    /*public long update(int rb, String nazivDog, String datumDog, String vrijemeDog, String bojaDog, String notifiDatDog, String notifiVrijDog){
-        ContentValues values=new ContentValues();
-         /*if(rb!=-1){
-            values.put(REDNI_BROJ, rb);
-        }*//*
-        values.put(REDNI_BROJ, rb);
-        values.put(NAZIV,nazivDog);
-        values.put(DATUM,datumDog);
-        values.put(VRIJEME,vrijemeDog);
-        values.put(BOJA,bojaDog);
-        values.put(NOTIFI_DATUM,notifiDatDog);
-        values.put(NOTIFI_VRIJEME,notifiVrijDog);
-        String where = REDNI_BROJ+" = "+rb; // odredimo koji redak
-        return myDB.update(TABLE_NAME, values, where, null);
-    }*/
-    public long delete(int rb){
-        String where = REDNI_BROJ+" = "+rb;
-        return myDB.delete(TABLE_NAME, where, null);
+
+    public long brisiRedak(int rb){
+        String gdje = REDNI_BROJ+" = "+rb;
+        //metoda "delete" vraća "0" ako se dogodi greška kod brisanja
+        return mojaBaza.delete(NAZIV_TABLICE, gdje, null);
     }
-    public Cursor getAllRecords(){  //privremena za podatke iz baze
-        //myDB.query(TABLE_NAME, null, null, null, null, null, null, null); - jedan nacin, dole drugi nacin...
-        String query="SELECT * FROM "+TABLE_NAME+";";
-        return myDB.rawQuery(query, null);
+
+    public Cursor ucitajPodatkeIzBaze(){  //Vraca sve podatke iz baze
+        String upit="SELECT * FROM "+NAZIV_TABLICE+";";
+        return mojaBaza.rawQuery(upit, null);
     }
 
 }

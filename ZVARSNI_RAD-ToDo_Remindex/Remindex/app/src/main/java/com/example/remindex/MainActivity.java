@@ -23,27 +23,27 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    AlatZaUnosUBP dbHelper; //Klasa koja pomaze pri unosu u BP
-    int RBAlarma; //Redni broj alarma i dogadaja
+    AlatZaUnosUBP pomocBP; //Objekt klase koja pomaze pri unosu u BP
+    int RBAlarma; //Redni broj alarma i dogadaja koji pomaže pri brisanju  događaja/alarma
     ArrayList<Dogadaj> dogadaji = new ArrayList<Dogadaj>(); //ArrayList koji pomaze pri ispisu dogadaja iz baze
     public static final String SPREMANJE_RB = "SpremljeniRB"; //naziv datoteke u koju spremamo RBDogadaja kako se ne bi obrisao pri gasenju aplikacije
 
     @Override
     protected void onStart() {
         super.onStart();
-        dbHelper.openDB();
+        pomocBP.openDB();  //Pri pokretanju aplikacije, spajamo se na bazu
     }
     @Override
     protected void onStop() {
         super.onStop();
-        dbHelper.closeDB();
+        pomocBP.closeDB(); //Pri gasenju aplikacije, prekidamo konekciju s bazom
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new AlatZaUnosUBP(MainActivity.this);
+        pomocBP = new AlatZaUnosUBP(MainActivity.this);  //Inicijalizacija objakta klase AlatZaUnosUBP
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);     //ucitavamo RB iz datoteke
@@ -78,22 +78,23 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 LinearLayout mainLinear = (LinearLayout) findViewById(R.id.main_linear);
                 mainLinear.removeAllViews(); // Refreshamo LinearLayout, inace bi se samo nadopunjavalo tw-evima
-                Cursor cursor = dbHelper.getAllRecords(); // "Šetanje po bazi"
-                if (cursor.moveToFirst()) {
-                    while (!cursor.isAfterLast()) {
+
+                Cursor pokazivac = pomocBP.ucitajPodatkeIzBaze(); // "Šetanje po bazi"
+                if (pokazivac.moveToFirst()) {
+                    while (!pokazivac.isAfterLast()) {
                         Dogadaj noviDogadaj = new Dogadaj();
-                        noviDogadaj.RB=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.REDNI_BROJ)));
-                        noviDogadaj.nazivDogadaja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.NAZIV)));
-                        noviDogadaj.datumDogadaja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.DATUM)));
-                        noviDogadaj.vrijemeDogadaja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.VRIJEME)));
-                        noviDogadaj.boja=cursor.getString(cursor.getColumnIndex((AlatZaUnosUBP.BOJA)));
-                        noviDogadaj.notifiGodina=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_GODINA)));
-                        noviDogadaj.notifiMjesec=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_MJESEC)));
-                        noviDogadaj.notifiDan=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_DAN)));
-                        noviDogadaj.notifiSat=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_SAT)));
-                        noviDogadaj.notifiMinuta=cursor.getInt(cursor.getColumnIndex((AlatZaUnosUBP.NOTIFI_MINUTA)));
+                        noviDogadaj.RB=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.REDNI_BROJ)));
+                        noviDogadaj.nazivDogadaja=pokazivac.getString(pokazivac.getColumnIndex((AlatZaUnosUBP.NAZIV)));
+                        noviDogadaj.datumDogadaja=pokazivac.getString(pokazivac.getColumnIndex((AlatZaUnosUBP.DATUM)));
+                        noviDogadaj.vrijemeDogadaja=pokazivac.getString(pokazivac.getColumnIndex((AlatZaUnosUBP.VRIJEME)));
+                        noviDogadaj.boja=pokazivac.getString(pokazivac.getColumnIndex((AlatZaUnosUBP.BOJA)));
+                        noviDogadaj.notifiGodina=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_GODINA)));
+                        noviDogadaj.notifiMjesec=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_MJESEC)));
+                        noviDogadaj.notifiDan=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_DAN)));
+                        noviDogadaj.notifiSat=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_SAT)));
+                        noviDogadaj.notifiMinuta=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_MINUTA)));
                         dogadaji.add(noviDogadaj);
-                        cursor.moveToNext();
+                        pokazivac.moveToNext();
                     }
                 }
                 for(int i=0;i<dogadaji.size();i++){
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                             builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    long result = dbHelper.delete(redniBrojZaBrisanje);
+                                    long result = pomocBP.brisiRedak(redniBrojZaBrisanje); //Brisemo redak s redinm brojem "redniBrojZaBrisanje"
                                     /*
                                     if(result==0){
                                         Toast.makeText(MainActivity.this, "Greška kod brisanja!", Toast.LENGTH_LONG).show();

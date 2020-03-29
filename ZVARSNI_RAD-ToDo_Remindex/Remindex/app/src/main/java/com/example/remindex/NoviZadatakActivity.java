@@ -25,7 +25,7 @@ import java.util.Date;
 
 public class NoviZadatakActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     //Date notifiDatum;
-    AlatZaUnosUBP dbHelper;
+    AlatZaUnosUBP pomocBP;
     int RBAlarma=1;  //RBAlarma, sluzi za identifikaciju ALARMA i RBDogadaja u isto vrijeme
     public static final String SPREMANJE_RB = "SpremljeniRB";   //spremamo RB u lokalnu datoteku kako se ne bi resetirala pri gasenju aplikacije
     int notifiGodina;
@@ -43,7 +43,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novi_zadatak);
-        dbHelper=new AlatZaUnosUBP(NoviZadatakActivity.this);
+        pomocBP=new AlatZaUnosUBP(NoviZadatakActivity.this);
         SharedPreferences spremljeniRB = getSharedPreferences(SPREMANJE_RB,0);      //ucitavamo RB iz datoteke
         RBAlarma = spremljeniRB.getInt("spremljeniRB",RBAlarma);                     //ucitavamo RB iz datoteke
 
@@ -73,12 +73,12 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     @Override
     protected void onStart() {
         super.onStart();
-        dbHelper.openDB();
+        pomocBP.openDB();
     }
     @Override
     protected void onStop() {
         super.onStop();
-        dbHelper.closeDB();
+        pomocBP.closeDB();
     }
 
     @Override
@@ -183,7 +183,7 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         String datum = editTextDatum.getText().toString();
         String vrijeme = editTextVrijeme.getText().toString();
         if(radioBtn1Dan.isChecked()){
-            long unos = dbHelper.insert(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, (notifiDan-1), notifiSat, notifiMinute);
+            long unos = pomocBP.unos(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, (notifiDan-1), notifiSat, notifiMinute);
             /*
             if(unos==-1){
                 Toast.makeText(NoviZadatakActivity.this, "Greška kod spremanja! ID vec postoji, kreirajte događaj još jednom.", Toast.LENGTH_LONG).show();
@@ -218,8 +218,8 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
             vrijemeOkidanjaObavijesti.set(Calendar.SECOND,0);
         }
         else{
-            long unos = dbHelper.insert(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
-            // -1 znaci da se nije insertalo
+            long unos = pomocBP.unos(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, notifiDan, (notifiSat-1), notifiMinute);
+            // -1 znaci da se nije unosalo
             /*
             if(unos==-1){
                 Toast.makeText(NoviZadatakActivity.this, "Greška kod spremanja! ID vec postoji, kreirajte događaj još jednom.", Toast.LENGTH_LONG).show();
