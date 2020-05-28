@@ -82,24 +82,27 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
     }
 
     @Override
+    //Funkcija onDateSet poziva se nakon što korisnik odabere željeni datum
     public void onDateSet(DatePicker view, int godina, int mjesec, int dan) {
-        Calendar kalendar = Calendar.getInstance();  //Trenutni datum
+        Calendar kalendar = Calendar.getInstance();
         kalendar.set(Calendar.YEAR, godina);
         kalendar.set(Calendar.MONTH, mjesec);
         kalendar.set(Calendar.DAY_OF_MONTH, dan);
         String datumString = DateFormat.getDateInstance(DateFormat.FULL).format(kalendar.getTime());
         EditText editTextDatum= (EditText) findViewById(R.id.editTextDatum);
-        editTextDatum.setText(datumString);
-        notifiGodina=kalendar.get(Calendar.YEAR);
-        notifiMjesec=kalendar.get(Calendar.MONTH);
+        editTextDatum.setText(datumString); //Nakon što korisnik odabere datum, on se ispisuje u EditText
+        notifiGodina=kalendar.get(Calendar.YEAR); //Odabrani datum sprema se u varijable koje kasnije koristimo
+        notifiMjesec=kalendar.get(Calendar.MONTH); //za okidanje alarma
         notifiDan=kalendar.get(Calendar.DAY_OF_MONTH);
     }
 
     @Override
+    //Funkcija onTimeSet poziva se nakon što korisnik odabere željeno vrijeme
     public void onTimeSet(TimePicker view, int sati, int minute) {
         EditText EditTextVrijeme = (EditText)findViewById(R.id.editTextVrijeme);
+        // PRIMJER: Kako bi izbjegli vrijeme: "4:5" provjeravamo znamenke te dobijamo "04:05"
         if(sati<10 && minute<10){
-            EditTextVrijeme.setText("0"+sati+" : 0"+minute);   // Rijesavamo problem npr. 4:5 -> 04:05
+            EditTextVrijeme.setText("0"+sati+" : 0"+minute);
         }
         else if(sati<10 && minute>9){
             EditTextVrijeme.setText("0"+sati+" : "+minute);
@@ -110,8 +113,8 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         else{
             EditTextVrijeme.setText(""+sati+" : "+minute);
         }
-        notifiSat=sati;
-        notifiMinute=minute;
+        notifiSat=sati; // Podatke o vremenu spremamo u varijable koje
+        notifiMinute=minute; // kasnije koristimo za alarm
     }
 
     public void radio1Dan(View view){
@@ -182,16 +185,12 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
         String nazivDogadaja = editTextNazivDogadaja.getText().toString();
         String datum = editTextDatum.getText().toString();
         String vrijeme = editTextVrijeme.getText().toString();
+
+        //Kod pritiska na tipku spremi, pomoću IF upita provjerava se je li korisnik odabrao potsjetnik 1 dan ili 1 sat prije
+        //Ovisno o odabranome, stvara se pomočni datum s vremenom u koje će se alarm okinuti
         if(radioBtn1Dan.isChecked()){
+            //Pomoću klase AlatZaUnosUBP u bazu podataka spremamo podatke o događaju
             long unos = pomocBP.unos(RBAlarma, nazivDogadaja, datum, vrijeme, bojaDogadaja, notifiGodina, notifiMjesec, (notifiDan-1), notifiSat, notifiMinute);
-            /*
-            if(unos==-1){
-                Toast.makeText(NoviZadatakActivity.this, "Greška kod spremanja! ID vec postoji, kreirajte događaj još jednom.", Toast.LENGTH_LONG).show();
-            }
-            else{
-                Toast.makeText(NoviZadatakActivity.this, "Uspjesno uneseno!, ID: "+RBAlarma, Toast.LENGTH_LONG).show();
-            }
-            */
 
             //Razlika se tu mora raditi (moguce da prođe vrijeme od postavljanja do spremanja)
             razlikaDatuma=0;  //refresh ako se vise puta stisne
@@ -206,10 +205,9 @@ public class NoviZadatakActivity extends AppCompatActivity implements DatePicker
             long zavrsetak = vrijemeNotifiiii.getTime();
             long razlika = zavrsetak-pocetak; //vraca milisekunde od 1970
             long razlikaUSekundama=razlika/1000;  //to dela, vrne tocno vreme v sekundama od trenutnoga do odabranoga datuma + vreme
-            //razlikaDatuma=razlikaUSekundama;
             razlikaDatuma=razlikaUSekundama*1000;
 
-            //test
+            //Ovisno o odabranome, stvara se pomočni datum s vremenom u koje će se alarm okinuti
             vrijemeOkidanjaObavijesti.set(Calendar.YEAR, notifiGodina);
             vrijemeOkidanjaObavijesti.set(Calendar.MONTH, notifiMjesec);
             vrijemeOkidanjaObavijesti.set(Calendar.DAY_OF_MONTH, (notifiDan-1));

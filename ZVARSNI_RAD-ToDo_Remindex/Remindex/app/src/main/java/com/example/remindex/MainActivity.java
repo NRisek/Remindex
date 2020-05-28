@@ -79,10 +79,11 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout mainLinear = (LinearLayout) findViewById(R.id.main_linear);
                 mainLinear.removeAllViews(); // Refreshamo LinearLayout, inace bi se samo nadopunjavalo tw-evima
 
-                Cursor pokazivac = pomocBP.ucitajPodatkeIzBaze(); // "Šetanje po bazi"
+                Cursor pokazivac = pomocBP.ucitajPodatkeIzBaze(); // Pokazivač "prolazi" kroz bazu podataka te sprema podatke u polje "dogadaji"
                 if (pokazivac.moveToFirst()) {
-                    while (!pokazivac.isAfterLast()) {
-                        Dogadaj noviDogadaj = new Dogadaj();
+                    while (!pokazivac.isAfterLast()) /*Tako dugo dok ne dođeš do kraja baze, radi sljedeće*/{
+                        Dogadaj noviDogadaj = new Dogadaj(); //Kreiranje objekta klase "Dogadaj"
+                        //Spremanje podataka u objekt
                         noviDogadaj.RB=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.REDNI_BROJ)));
                         noviDogadaj.nazivDogadaja=pokazivac.getString(pokazivac.getColumnIndex((AlatZaUnosUBP.NAZIV)));
                         noviDogadaj.datumDogadaja=pokazivac.getString(pokazivac.getColumnIndex((AlatZaUnosUBP.DATUM)));
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         noviDogadaj.notifiDan=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_DAN)));
                         noviDogadaj.notifiSat=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_SAT)));
                         noviDogadaj.notifiMinuta=pokazivac.getInt(pokazivac.getColumnIndex((AlatZaUnosUBP.NOTIFI_MINUTA)));
-                        dogadaji.add(noviDogadaj);
+                        dogadaji.add(noviDogadaj); //Dodavanje kreiranog objekta u polje
                         pokazivac.moveToNext();
                     }
                 }
